@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Frota</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .diagram-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .block {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            padding: 10px;
+            width: 220px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .field-label {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .editable {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .car {
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-top: 5px;
+        }
+        .plate {
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 8px 12px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Controle de Frota</h1>
+    <div class="diagram-container" id="diagram-container"></div>
+    <button onclick="saveData()">Salvar Dados</button>
+
+    <script>
+        // Dados dos carros
+        const cars = [
+            { name: "Strada 01", plate: "BCQ - 6753" },
+            { name: "Strada 03", plate: "BCQ - 6635" },
+            { name: "Strada 05", plate: "BCQ - 7388" },
+            { name: "Strada 06", plate: "BCQ - 7334" },
+            { name: "Saveiro 14", plate: "SEX - 1B89" },
+            { name: "Strada 20", plate: "BEP - 3J79" },
+            { name: "Strada 22", plate: "FKH - 5J25" },
+            { name: "Strada 23", plate: "BCA - 9H62" },
+            { name: "Master 24", plate: "SEV - 1E84" },
+            { name: "Master 26", plate: "RHN - 6J20" },
+            { name: "Fiorino 27", plate: "RGB - 5C51" },
+            { name: "Fiorino 29", plate: "RFO - 4B04" }
+        ];
+
+        // Carrega os blocos no site
+        const container = document.getElementById("diagram-container");
+
+        function loadBlocks() {
+            cars.forEach((car, index) => {
+                const block = document.createElement("div");
+                block.className = "block";
+                block.innerHTML = `
+                    <div class="car">${car.name}</div>
+                    <div class="plate">${car.plate}</div>
+                    <label class="field-label">Motorista:</label>
+                    <input type="text" class="editable" id="motorista-${index}">
+                    <label class="field-label">Passageiro 1:</label>
+                    <input type="text" class="editable" id="passageiro1-${index}">
+                    <label class="field-label">Passageiro 2:</label>
+                    <input type="text" class="editable" id="passageiro2-${index}">
+                    <label class="field-label">Status:</label>
+                    <input type="text" class="editable" id="status-${index}">
+                    <label class="field-label">Saída 1:</label>
+                    <input type="text" class="editable" id="saida1-${index}">
+                    <label class="field-label">Chegada:</label>
+                    <input type="text" class="editable" id="chegada-${index}">
+                    <label class="field-label">Saída 2:</label>
+                    <input type="text" class="editable" id="saida2-${index}">
+                `;
+                container.appendChild(block);
+            });
+            loadData(); // Carregar dados salvos
+        }
+
+        // Salva os dados no Local Storage
+        function saveData() {
+            const formData = {};
+            cars.forEach((_, index) => {
+                formData[`motorista-${index}`] = document.getElementById(`motorista-${index}`).value;
+                formData[`passageiro1-${index}`] = document.getElementById(`passageiro1-${index}`).value;
+                formData[`passageiro2-${index}`] = document.getElementById(`passageiro2-${index}`).value;
+                formData[`status-${index}`] = document.getElementById(`status-${index}`).value;
+                formData[`saida1-${index}`] = document.getElementById(`saida1-${index}`).value;
+                formData[`chegada-${index}`] = document.getElementById(`chegada-${index}`).value;
+                formData[`saida2-${index}`] = document.getElementById(`saida2-${index}`).value;
+            });
+            localStorage.setItem("formData", JSON.stringify(formData));
+            alert("Dados salvos com sucesso!");
+        }
+
+        // Carrega os dados do Local Storage
+        function loadData() {
+            const savedData = JSON.parse(localStorage.getItem("formData"));
+            if (savedData) {
+                cars.forEach((_, index) => {
+                    document.getElementById(`motorista-${index}`).value = savedData[`motorista-${index}`] || "";
+                    document.getElementById(`passageiro1-${index}`).value = savedData[`passageiro1-${index}`] || "";
+                    document.getElementById(`passageiro2-${index}`).value = savedData[`passageiro2-${index}`] || "";
+                    document.getElementById(`status-${index}`).value = savedData[`status-${index}`] || "";
+                    document.getElementById(`saida1-${index}`).value = savedData[`saida1-${index}`] || "";
+                    document.getElementById(`chegada-${index}`).value = savedData[`chegada-${index}`] || "";
+                    document.getElementById(`saida2-${index}`).value = savedData[`saida2-${index}`] || "";
+                });
+            }
+        }
+
+        // Inicializa o site
+        loadBlocks();
+    </script>
+</body>
+<script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-app-compat.js"></script>
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDXWPVnftoiNhRTz4EJOpvzxFeKC7hICEw",
+      authDomain: "index-76f4d.firebaseapp.com",
+      projectId: "index-76f4d",
+      storageBucket: "index-76f4d.firebasestorage.app",
+      messagingSenderId: "755349326603",
+      appId: "1:755349326603:web:0ca53d57f4eaa962a8b00e",
+      measurementId: "G-BVCHSK1V7H"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
+</html>
